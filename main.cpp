@@ -67,24 +67,16 @@ void PriorityQueue::percolateDown()
 {
     int parentInd = 1;
     int childInd = parentInd * 2;
-    int maxInd = size + 1;
-    values[parentInd] = values[maxInd];
+    values[parentInd] = values[size + 1];
     while (childInd + 1 <= size)
     {
-        if(childInd + 1 <= size)
+        if(values[childInd] > values[childInd + 1])
         {
-            if(values[childInd] > values[childInd + 1])
-            {
-                childInd++;
-            }
-            swap(childInd, parentInd);
+            childInd++;
         }
-        else if(childInd <= size)
+        if(values[childInd] < values[parentInd])
         {
-            if(values[childInd] < values[parentInd])
-            {
-                swap(childInd, parentInd);
-            }
+            swap(childInd, parentInd);
         }
         parentInd = childInd;
         childInd *= 2;
@@ -135,12 +127,17 @@ int getRand()
 int main()
 {
     PriorityQueue p1;
+    
     // Randomize the seed for rand()
     srand(time(NULL));
+    
+    // Add the ten numbers
     for(int i = 0; i < 10; i++)
     {
         p1.push(getRand());
     }
+    
+    // Apply actions and print
     for(int i = 0; i < 30; i++)
     {
         int toAdd = getRand();
