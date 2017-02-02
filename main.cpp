@@ -1,4 +1,6 @@
 #include <iostream>
+#include <time.h>
+#include <stdlib.h>
 
 /*
  * Priority queue using a heap as the way to determine priorities
@@ -37,6 +39,11 @@ public:
     // @return : minimum value in the priority queue
     //
     int pop();
+    
+    //
+    // method that prints all of the elements in the queue
+    //
+    void print();
 };
 
 PriorityQueue::PriorityQueue()
@@ -58,16 +65,29 @@ void PriorityQueue::percolateUp()
 
 void PriorityQueue::percolateDown()
 {
-    int childInd = 1;
-    while (childInd <= size)
+    int parentInd = 1;
+    int childInd = parentInd * 2;
+    int maxInd = size + 1;
+    values[parentInd] = values[maxInd];
+    while (childInd + 1 <= size)
     {
-        int parentInd = childInd;
-        childInd *= 2;
-        if(values[childInd] >= values[childInd + 1])
+        if(childInd + 1 <= size)
         {
-            childInd++;
+            if(values[childInd] > values[childInd + 1])
+            {
+                childInd++;
+            }
+            swap(childInd, parentInd);
         }
-        values[parentInd] = values[childInd];
+        else if(childInd <= size)
+        {
+            if(values[childInd] < values[parentInd])
+            {
+                swap(childInd, parentInd);
+            }
+        }
+        parentInd = childInd;
+        childInd *= 2;
     }
 }
 
@@ -91,30 +111,46 @@ void PriorityQueue::push(int value)
 int PriorityQueue::pop()
 {
     int value = values[1];
-    percolateDown();
     if(size > 0)
     {
-        values[size] = INT_MAX;
         size--;
     }
+    percolateDown();
     return value;
+}
+
+void PriorityQueue::print()
+{
+    for(int i = 1; i < size + 1; i++)
+    {
+        std::cout << values[i] << " ";
+    }
+}
+
+int getRand()
+{
+    return rand() % 100 + 1;
 }
 
 int main()
 {
     PriorityQueue p1;
-    p1.push(5);
-    p1.push(3);
-    p1.push(6);
-    p1.push(10);
-    p1.push(4);
-    p1.push(1);
-    p1.push(2);
-    std::cout << p1.pop() << std::endl;
-    std::cout << p1.pop() << std::endl;
-    std::cout << p1.pop() << std::endl;
-    std::cout << p1.pop() << std::endl;
-    std::cout << p1.pop() << std::endl;
-    std::cout << p1.pop() << std::endl;
+    // Randomize the seed for rand()
+    srand(time(NULL));
+    for(int i = 0; i < 10; i++)
+    {
+        p1.push(getRand());
+    }
+    for(int i = 0; i < 30; i++)
+    {
+        int toAdd = getRand();
+        int min = p1.pop();
+        std::cout << "The current dispatched number is " << min << std::endl;
+        std::cout << "The new coming number is " << toAdd << std::endl;
+        p1.push(toAdd);
+        std::cout << "The numbers in the queue are ";
+        p1.print();
+        std::cout << std::endl << std::endl;
+    }
     return 0;
 }
